@@ -20,9 +20,9 @@ print(evalprotcol_df)
 
 # save_processed_audio_dir = 'white_noise'
 filename_ls = []
-snr_range = [0,0.5,10,10.5,20,20.5]
+snr_range = [0,0.5]
 # loop over the protcol file
-for i in range(0,len(snr_range),2):
+for i in range(len(snr_range)):
     for index, row in evalprotcol_df.iterrows():
         filename = row["AUDIO_FILE_NAME"]
 
@@ -41,17 +41,17 @@ for i in range(0,len(snr_range),2):
             noise_transform=PolarityInversion(),
             p=1.0
        )
-        augmented_white_noise = transform(audio_data, sample_rate=22050)
+        augmented_white_noise = transform(audio_data, sample_rate=sr)
         ## conver array to wav file 
-        fs = 22050
+        fs = 16000
         #output filename
-        out_f = ("{filename}_babble_{i}_{j}".format(filename =filename ,i=snr_range[i], j=snr_range[i+1])+'.wav')
+        out_f = ("{filename}_babble_0_0_5".format(filename =filename)+'.wav')
         print(out_f)
         #write array to wav file.
         noise_wav = wavf.write(out_f, fs, augmented_white_noise)
 
         #create a folder to save the audios
-        createpath = ('data/AsvSpoofData_2019_babble_{i}_{j}'.format(i=snr_range[i], j=snr_range[i+1]))
+        createpath = ('data/AsvSpoofData_2019_babble_0_0_5')
         if not os.path.exists(createpath):
             os.makedirs(createpath)
         os.rename(out_f, os.path.join(createpath, out_f)) 
@@ -60,7 +60,7 @@ for i in range(0,len(snr_range),2):
         # reverb_3_audio = reverb_3(audio_data) # just an example
 
         # write the new file to the specified location
-        new_filename = (filename + '_babble_{i}_{j}'.format(i=snr_range[i],j=snr_range[i+1] ))
+        new_filename = (filename + '_babble_0_0_5')
         # sf.write(new_filename + '.flac', augmented_white_noise, sr, format='flac', subtype='PCM_16')
 
         filename_ls.append(new_filename)
@@ -69,7 +69,7 @@ for i in range(0,len(snr_range),2):
     evalprotcol_df["AUDIO_FILE_NAME"] = filename_ls
 
     # save pandas dataframe as txt file
-    evalprotcol_df.to_csv("babble_{i}_{j}_protocol.txt".format(i=snr_range[i], j=snr_range[i+1]), sep=" ", index=False, header=False)
+    evalprotcol_df.to_csv("babble_0_0_5_protocol.txt", sep=" ", index=False, header=False)
 
 
 
